@@ -9,6 +9,7 @@ import java.util.List;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -38,11 +39,15 @@ public class ArtigoServiceImpl implements ArtigoService {
 
   @Override
   public Artigo criar(Artigo artigo) {
+    atribuirAutorSeInformadoEexistente(artigo);
+    return artigoRepository.save(artigo);
+  }
+
+  private void atribuirAutorSeInformadoEexistente(Artigo artigo) {
     if (autorFoiInformadoNo(artigo)) {
       var autor = autorService.obterPorCodigo(artigo.getAutor().getCodigo());
       artigo.setAutor(autor);
     }
-    return artigoRepository.save(artigo);
   }
 
   private boolean autorFoiInformadoNo(Artigo artigo) {
@@ -53,5 +58,35 @@ public class ArtigoServiceImpl implements ArtigoService {
   public List<Artigo> findByDataGreaterThan(LocalDateTime data) {
     var query = new Query(Criteria.where("data").gt(data));
     return mongoTemplate.find(query, Artigo.class);
+  }
+
+  @Override
+  public List<Artigo> findByDataAndStatus(LocalDateTime data, Integer status) {
+    var query = new Query(Criteria.where("data").is(data).and("status").is(status));
+    return mongoTemplate.find(query, Artigo.class);
+  }
+
+  @Override
+  public void alterar(Artigo artigo) {
+    atribuirAutorSeInformadoEexistente(artigo);
+    artigoRepository.save(artigo);
+  }
+
+  @Override
+  public void alterarParcialmente(String codigo, String url) {
+    var query = new Query(Criteria.where("_id").is(codigo));
+    var update = new Update().set("url", url);
+    mongoTemplate.updateFirst(query, update, Artigo.class);
+  }
+
+  @Override
+  public void deleteById(String id) {
+    artigoRepository.deleteById(id);
+  }
+
+  @Override
+  public void deletarArtigoById(String id) {
+    var query = new Query(Criteria.where("_id").is(id));
+    mongoTemplate.remove(query, Artigo.class);
   }
 }
