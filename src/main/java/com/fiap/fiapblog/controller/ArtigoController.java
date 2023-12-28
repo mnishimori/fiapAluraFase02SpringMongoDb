@@ -61,12 +61,24 @@ public class ArtigoController {
   }
 
   @DeleteMapping("/{codigo}")
-  public void deletar(@PathVariable String codigo){
+  public void deletar(@PathVariable String codigo) {
     artigoService.deleteById(codigo);
   }
 
   @DeleteMapping("/delete-por-id/{codigo}")
-  public void deletarPorId(@PathVariable String codigo){
+  public void deletarPorId(@PathVariable String codigo) {
     artigoService.deletarArtigoById(codigo);
+  }
+
+  @GetMapping("/status-maiordata")
+  public List<Artigo> findByStatusAndDataIsGreaterThan(@RequestParam Integer status,
+      @RequestParam LocalDateTime data) {
+    return artigoService.findByStatusAndDataIsGreaterThan(status, data);
+  }
+
+  @GetMapping("/periodo")
+  public List<Artigo> obterArtigosPorPeriodo(@RequestParam("de") LocalDateTime dataInicial,
+      @RequestParam("ate") LocalDateTime dataFinal) {
+    return artigoService.obterArtigosPorPeriodo(dataInicial, dataFinal);
   }
 }
