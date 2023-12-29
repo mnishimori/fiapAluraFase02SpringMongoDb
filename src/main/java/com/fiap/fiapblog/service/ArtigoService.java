@@ -28,4 +28,6 @@ public interface ArtigoService {
 
   List<Artigo> obterArtigosPorPeriodo(LocalDateTime dataInicial, LocalDateTime dataFinal);
 
+  List<Artigo> encontrarArtigosPorDataStatusTitulo(LocalDateTime data, Integer status,
+      String titulo);
 }

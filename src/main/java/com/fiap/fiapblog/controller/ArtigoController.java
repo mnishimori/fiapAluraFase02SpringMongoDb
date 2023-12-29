@@ -81,4 +81,10 @@ public class ArtigoController {
       @RequestParam("ate") LocalDateTime dataFinal) {
     return artigoService.obterArtigosPorPeriodo(dataInicial, dataFinal);
   }
+
+  @GetMapping("/data-status-titulo")
+  public List<Artigo> encontrarArtigosPorDataStatusTitulo(@RequestParam LocalDateTime data,
+      @RequestParam Integer status, @RequestParam String titulo) {
+    return artigoService.encontrarArtigosPorDataStatusTitulo(data, status, titulo);
+  }
 }

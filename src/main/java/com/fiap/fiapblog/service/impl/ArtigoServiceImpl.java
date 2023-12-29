@@ -56,14 +56,12 @@ public class ArtigoServiceImpl implements ArtigoService {
 
   @Override
   public List<Artigo> findByDataGreaterThan(LocalDateTime data) {
-    var query = new Query(Criteria.where("data").gt(data));
-    return mongoTemplate.find(query, Artigo.class);
+    return realizarPesquisa(Criteria.where("data").gt(data));
   }
 
   @Override
   public List<Artigo> findByDataAndStatus(LocalDateTime data, Integer status) {
-    var query = new Query(Criteria.where("data").is(data).and("status").is(status));
-    return mongoTemplate.find(query, Artigo.class);
+    return realizarPesquisa(Criteria.where("data").is(data).and("status").is(status));
   }
 
   @Override
@@ -98,5 +96,29 @@ public class ArtigoServiceImpl implements ArtigoService {
   @Override
   public List<Artigo> obterArtigosPorPeriodo(LocalDateTime dataInicial, LocalDateTime dataFinal) {
     return artigoRepository.obterArtigosPorPeriodo(dataInicial, dataFinal);
+  }
+
+  @Override
+  public List<Artigo> encontrarArtigosPorDataStatusTitulo(LocalDateTime data, Integer status,
+      String titulo) {
+    var criteria = gerarCriteriosDePesquisa(data, status, titulo);
+    return realizarPesquisa(criteria);
+  }
+
+  private List<Artigo> realizarPesquisa(Criteria criteria) {
+    var query = new Query(criteria);
+    return mongoTemplate.find(query, Artigo.class);
+  }
+
+  private Criteria gerarCriteriosDePesquisa(LocalDateTime data, Integer status, String titulo) {
+    var criteria = new Criteria();
+    criteria.and("data").gte(data);
+    if (status != null) {
+      criteria.and("status").is(status);
+    }
+    if (titulo != null && !titulo.isEmpty()) {
+      criteria.and("titulo").regex(titulo, "i");
+    }
+    return criteria;
   }
 }
