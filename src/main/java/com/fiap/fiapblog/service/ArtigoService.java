@@ -3,6 +3,8 @@ package com.fiap.fiapblog.service;
 import com.fiap.fiapblog.model.Artigo;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface ArtigoService {
 
@@ -30,4 +32,6 @@ public interface ArtigoService {
 
   List<Artigo> encontrarArtigosPorDataStatusTitulo(LocalDateTime data, Integer status,
       String titulo);
+
+  Page<Artigo> listarArtigos(Pageable pageable);
 }

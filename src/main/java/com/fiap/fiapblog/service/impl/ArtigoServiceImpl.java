@@ -6,6 +6,8 @@ import com.fiap.fiapblog.service.ArtigoService;
 import com.fiap.fiapblog.service.AutorService;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -103,6 +105,11 @@ public class ArtigoServiceImpl implements ArtigoService {
       String titulo) {
     var criteria = gerarCriteriosDePesquisa(data, status, titulo);
     return realizarPesquisa(criteria);
+  }
+
+  @Override
+  public Page<Artigo> listarArtigos(Pageable pageable) {
+    return artigoRepository.findAll(pageable);
   }
 
   private List<Artigo> realizarPesquisa(Criteria criteria) {

@@ -4,6 +4,9 @@ import com.fiap.fiapblog.model.Artigo;
 import com.fiap.fiapblog.service.ArtigoService;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -86,5 +89,11 @@ public class ArtigoController {
   public List<Artigo> encontrarArtigosPorDataStatusTitulo(@RequestParam LocalDateTime data,
       @RequestParam Integer status, @RequestParam String titulo) {
     return artigoService.encontrarArtigosPorDataStatusTitulo(data, status, titulo);
+  }
+
+  @GetMapping("/paginados")
+  public ResponseEntity<Page<Artigo>> listarArtigos(Pageable pageable) {
+    var artigos = artigoService.listarArtigos(pageable);
+    return ResponseEntity.ok(artigos);
   }
 }
