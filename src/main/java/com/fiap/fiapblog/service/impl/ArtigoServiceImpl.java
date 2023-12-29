@@ -7,7 +7,9 @@ import com.fiap.fiapblog.service.AutorService;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -109,7 +111,19 @@ public class ArtigoServiceImpl implements ArtigoService {
 
   @Override
   public Page<Artigo> listarArtigos(Pageable pageable) {
-    return artigoRepository.findAll(pageable);
+    var sort = Sort.by("titulo").ascending();
+    var newPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+    return artigoRepository.findAll(newPageable);
+  }
+
+  @Override
+  public List<Artigo> findByStatusOrderByTituloAsc(Integer status) {
+    return artigoRepository.findByStatusOrderByTituloAsc(status);
+  }
+
+  @Override
+  public List<Artigo> obterArtigosPorStatusComOrdenacao(Integer status) {
+    return artigoRepository.obterArtigosPorStatusComOrdenacao(status);
   }
 
   private List<Artigo> realizarPesquisa(Criteria criteria) {

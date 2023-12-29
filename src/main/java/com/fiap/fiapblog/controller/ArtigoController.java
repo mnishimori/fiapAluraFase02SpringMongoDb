@@ -96,4 +96,14 @@ public class ArtigoController {
     var artigos = artigoService.listarArtigos(pageable);
     return ResponseEntity.ok(artigos);
   }
+
+  @GetMapping("/status/{status}")
+  public List<Artigo> listarArtigosPorStatusOrdenadosPorTitulo(@PathVariable Integer status) {
+    return artigoService.findByStatusOrderByTituloAsc(status);
+  }
+
+  @GetMapping("/status-com-ordenacao/{status}")
+  public List<Artigo> listarArtigosPorStatusComOrdenacao(@PathVariable Integer status) {
+    return artigoService.obterArtigosPorStatusComOrdenacao(status);
+  }
 }

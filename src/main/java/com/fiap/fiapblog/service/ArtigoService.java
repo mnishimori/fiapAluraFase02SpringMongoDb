@@ -34,4 +34,8 @@ public interface ArtigoService {
       String titulo);
 
   Page<Artigo> listarArtigos(Pageable pageable);
+
+  List<Artigo> findByStatusOrderByTituloAsc(Integer status);
+
+  List<Artigo> obterArtigosPorStatusComOrdenacao(Integer status);
 }
