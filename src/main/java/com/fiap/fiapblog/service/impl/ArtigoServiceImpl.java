@@ -1,9 +1,12 @@
 package com.fiap.fiapblog.service.impl;
 
 import com.fiap.fiapblog.model.Artigo;
+import com.fiap.fiapblog.model.ArtigoAutorCount;
+import com.fiap.fiapblog.model.ArtigoStatusCount;
 import com.fiap.fiapblog.repository.ArtigoRepository;
 import com.fiap.fiapblog.service.ArtigoService;
 import com.fiap.fiapblog.service.AutorService;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -11,8 +14,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.TextCriteria;
+import org.springframework.data.mongodb.core.query.TextQuery;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
@@ -124,6 +130,35 @@ public class ArtigoServiceImpl implements ArtigoService {
   @Override
   public List<Artigo> obterArtigosPorStatusComOrdenacao(Integer status) {
     return artigoRepository.obterArtigosPorStatusComOrdenacao(status);
+  }
+
+  @Override
+  public List<Artigo> findByTexto(String texto) {
+    var criteria = TextCriteria.forDefaultLanguage().matchingPhrase(texto);
+    var query = TextQuery.queryText(criteria).sortByScore();
+    return mongoTemplate.find(query, Artigo.class);
+  }
+
+  @Override
+  public List<ArtigoStatusCount> contarArtigosPorStatus() {
+    var aggregation = Aggregation.newAggregation(Artigo.class,
+        Aggregation.group("status").count().as("quantidade"),
+        Aggregation.project("quantidade").and("status").previousOperation());
+    var result = mongoTemplate.aggregate(aggregation, ArtigoStatusCount.class);
+    return result.getMappedResults();
+  }
+
+  @Override
+  public List<ArtigoAutorCount> contarArtigosPorAutorPorPeriodo(LocalDate dataInicial,
+      LocalDate dataFinal) {
+    var criteria = new Criteria().and("data").gte(dataInicial.atStartOfDay())
+        .lt(dataFinal.plusDays(1).atStartOfDay());
+    var aggregation = Aggregation.newAggregation(Artigo.class,
+        Aggregation.match(criteria),
+        Aggregation.group("autor").count().as("quantidade"),
+        Aggregation.project("quantidade").and("autor").previousOperation());
+    var result = mongoTemplate.aggregate(aggregation, ArtigoAutorCount.class);
+    return result.getMappedResults();
   }
 
   private List<Artigo> realizarPesquisa(Criteria criteria) {

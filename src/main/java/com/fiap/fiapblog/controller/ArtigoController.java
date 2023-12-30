@@ -1,7 +1,10 @@
 package com.fiap.fiapblog.controller;
 
 import com.fiap.fiapblog.model.Artigo;
+import com.fiap.fiapblog.model.ArtigoAutorCount;
+import com.fiap.fiapblog.model.ArtigoStatusCount;
 import com.fiap.fiapblog.service.ArtigoService;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -105,5 +108,22 @@ public class ArtigoController {
   @GetMapping("/status-com-ordenacao/{status}")
   public List<Artigo> listarArtigosPorStatusComOrdenacao(@PathVariable Integer status) {
     return artigoService.obterArtigosPorStatusComOrdenacao(status);
+  }
+
+  @GetMapping("/pesquisa-por")
+  public List<Artigo> findByTexto(@RequestParam String texto) {
+    return artigoService.findByTexto(texto);
+  }
+
+  @GetMapping("/contagem-artigos-status")
+  public List<ArtigoStatusCount> contarArtigoPorStatus() {
+    return artigoService.contarArtigosPorStatus();
+  }
+
+  @GetMapping("/contagem-artigos-autor")
+  public List<ArtigoAutorCount> contarArtigosPorAutorPorPeriodo(
+      @RequestParam("data-inicial") LocalDate dataInicial,
+      @RequestParam("data-final") LocalDate dataFinal) {
+    return artigoService.contarArtigosPorAutorPorPeriodo(dataInicial, dataFinal);
   }
 }

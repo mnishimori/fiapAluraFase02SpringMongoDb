@@ -1,6 +1,9 @@
 package com.fiap.fiapblog.service;
 
 import com.fiap.fiapblog.model.Artigo;
+import com.fiap.fiapblog.model.ArtigoAutorCount;
+import com.fiap.fiapblog.model.ArtigoStatusCount;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -38,4 +41,11 @@ public interface ArtigoService {
   List<Artigo> findByStatusOrderByTituloAsc(Integer status);
 
   List<Artigo> obterArtigosPorStatusComOrdenacao(Integer status);
+
+  List<Artigo> findByTexto(String texto);
+
+  List<ArtigoStatusCount> contarArtigosPorStatus();
+
+  List<ArtigoAutorCount> contarArtigosPorAutorPorPeriodo(LocalDate dataInicial,
+      LocalDate dataFinal);
 }
