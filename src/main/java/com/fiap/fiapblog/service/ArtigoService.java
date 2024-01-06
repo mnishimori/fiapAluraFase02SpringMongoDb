@@ -23,7 +23,7 @@ public interface ArtigoService {
 
   void alterar(Artigo artigo);
 
-  void alterarParcialmente(String codigo, String url);
+  void alterarUrl(String codigo, String url);
 
   void deleteById(String id);
 
