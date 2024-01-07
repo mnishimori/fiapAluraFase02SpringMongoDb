@@ -52,11 +52,11 @@ public class ArtigoServiceImpl implements ArtigoService {
   @Transactional
   @Override
   public Artigo criar(Artigo artigo) {
-    atribuirAutorSeInformadoEexistente(artigo);
+    atribuirAutorSeInformadoSeExistente(artigo);
     return artigoRepository.save(artigo);
   }
 
-  private void atribuirAutorSeInformadoEexistente(Artigo artigo) {
+  private void atribuirAutorSeInformadoSeExistente(Artigo artigo) {
     if (autorFoiInformadoNo(artigo)) {
       var autor = autorService.obterPorCodigo(artigo.getAutor().getCodigo());
       artigo.setAutor(autor);
@@ -80,7 +80,8 @@ public class ArtigoServiceImpl implements ArtigoService {
   @Transactional
   @Override
   public void alterar(Artigo artigo) {
-    atribuirAutorSeInformadoEexistente(artigo);
+    findByIdRequired(artigo.getCodigo());
+    atribuirAutorSeInformadoSeExistente(artigo);
     try {
       artigoRepository.save(artigo);
     } catch (OptimisticLockingFailureException e) {
@@ -96,14 +97,14 @@ public class ArtigoServiceImpl implements ArtigoService {
     artigoFound.setUrl(artigo.getUrl());
     artigoFound.setAutor(artigo.getAutor());
     artigoFound.setStatus(artigo.getStatus());
-    var version = artigoFound.getVersion();
-    artigoFound.setVersion(version++);
+    artigoFound.setVersion(artigoFound.getVersion()+1);
     artigoRepository.save(artigoFound);
   }
 
   @Transactional
   @Override
   public void alterarUrl(String codigo, String url) {
+    findByIdRequired(codigo);
     var query = new Query(Criteria.where("_id").is(codigo));
     var update = new Update().set("url", url);
     mongoTemplate.updateFirst(query, update, Artigo.class);
