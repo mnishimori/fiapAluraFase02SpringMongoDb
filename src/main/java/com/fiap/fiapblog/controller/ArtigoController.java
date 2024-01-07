@@ -7,13 +7,10 @@ import com.fiap.fiapblog.service.ArtigoService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -128,12 +125,5 @@ public class ArtigoController {
       @RequestParam("data-inicial") LocalDate dataInicial,
       @RequestParam("data-final") LocalDate dataFinal) {
     return artigoService.contarArtigosPorAutorPorPeriodo(dataInicial, dataFinal);
-  }
-
-  @ExceptionHandler(OptimisticLockingFailureException.class)
-  public ResponseEntity<String> handleOptimistcLockingFailureException(
-      OptimisticLockingFailureException optimisticLockingFailureException) {
-    return ResponseEntity.status(HttpStatus.CONFLICT)
-        .body("Erro de concorrência! Por favor, tente novamente");
   }
 }
