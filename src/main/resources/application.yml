@@ -7,3 +7,4 @@ spring:
       username: root
       password: example
       authentication-database: admin
+      uri: mongodb://localhost:27017/blog?retryWrites=false
